@@ -1,54 +1,45 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>読み込み中...</title>
-    <meta http-equiv="refresh" content="0;URL='line://ti/p/@257pbiqz'">
+    <script>
+        // ★IDが変わったらここを書き換えてください
+        const line_id = "@257pbiqz";
+
+        (function() {
+            const ua = navigator.userAgent.toLowerCase();
+            
+            // 1. 各デバイス用のURLを作成
+            // iPhone用（スキーム直撃）
+            const ios_url = "line://ti/p/" + line_id;
+            // Android用（Intent直撃：これが最強の突破方法です）
+            const android_url = "intent://ti/p/" + line_id + "#Intent;scheme=line;package=jp.naver.line.android;end";
+            // 万が一の予備（ユニバーサルリンク）
+            const web_url = "https://line.me/R/ti/p/" + line_id;
+
+            // 2. 実行関数
+            function launch() {
+                if (ua.indexOf("android") > -1) {
+                    // Android：Intentを投げてTikTokブラウザのガードを破壊
+                    location.replace(android_url);
+                } else {
+                    // iOS：カスタムスキームで強制起動
+                    location.replace(ios_url);
+                    
+                    // 0.5秒後に予備リンクへ（アプリが入っていない場合用）
+                    setTimeout(function() {
+                        location.replace(web_url);
+                    }, 500);
+                }
+            }
+
+            // 3. ページを読み込む「前」に実行を開始
+            launch();
+        })();
+    </script>
 </head>
 <body style="background-color: #ffffff;">
-
-<script>
-    (function() {
-        // ★修正ポイント：LINE IDが変わったらここを書き換えてください
-        const LINE_ID = "@257pbiqz";
-
-        const ua = navigator.userAgent.toLowerCase();
-        const isAndroid = ua.indexOf("android") > -1;
-
-        // Android用の特殊な強制命令（Intent）
-        // これを使うと、画像の「緑の確認画面」を完全にスキップしてアプリに直行します
-        const androidIntent = "intent://ti/p/" + LINE_ID + "#Intent;scheme=line;package=jp.naver.line.android;end";
-        
-        // iPhone用の強制命令
-        const iosScheme = "line://ti/p/" + LINE_ID;
-
-        function forceJump() {
-            if (isAndroid) {
-                // Androidの場合
-                location.replace(androidIntent);
-            } else {
-                // iPhoneの場合（Metaタグで飛ばなかった時の保険）
-                location.replace(iosScheme);
-            }
-        }
-
-        // 実行（ループ防止のためsessionStorageを使用）
-        if (!sessionStorage.getItem('redirected')) {
-            sessionStorage.setItem('redirected', 'true');
-            forceJump();
-        }
-
-        // 万が一アプリが開かなかった時、GitHubに戻されないように「ブラウザで開く」ボタンだけ出す
-        setTimeout(function() {
-            document.body.innerHTML = `
-                <div style="text-align:center; padding-top:50px; font-family:sans-serif;">
-                    <p>LINEが起動しない場合は<br>右上の「...」から<br>「ブラウザで開く」を選択してください</p>
-                    <a href="line://ti/p/${LINE_ID}" style="display:inline-block; background:#06C755; color:white; padding:15px 30px; border-radius:30px; text-decoration:none; font-weight:bold;">LINEを開く</a>
-                </div>
-            `;
-        }, 2000);
-    })();
-</script>
-</body>
+    </body>
 </html>
