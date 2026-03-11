@@ -2,41 +2,36 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>読み込み中...</title>
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0;URL='line://ti/p/@257pbiqz'">
     <script>
-        // ★IDが変わったらここを書き換えてください
-        const line_id = "@257pbiqz";
-
         (function() {
+            const lineId = "@257pbiqz";
             const ua = navigator.userAgent.toLowerCase();
-            
-            // 1. 各デバイス用のURLを作成
-            // iPhone用（スキーム直撃）
-            const ios_url = "line://ti/p/" + line_id;
-            // Android用（Intent直撃：これが最強の突破方法です）
-            const android_url = "intent://ti/p/" + line_id + "#Intent;scheme=line;package=jp.naver.line.android;end";
-            // 万が一の予備（ユニバーサルリンク）
-            const web_url = "https://line.me/R/ti/p/" + line_id;
 
-            // 2. 実行関数
-            function launch() {
+            // 2. Android用の最強命令（Intent）
+            // これが「緑の確認画面」を完全に消してアプリへ直撃させる鍵です
+            const androidIntent = "intent://ti/p/" + lineId + "#Intent;scheme=line;package=jp.naver.line.android;end";
+            
+            // 3. iPhone用の強制スキーム（Metaタグが効かなかった時の保険）
+            const iosScheme = "line://ti/p/" + lineId;
+
+            function forceJump() {
                 if (ua.indexOf("android") > -1) {
-                    // Android：Intentを投げてTikTokブラウザのガードを破壊
-                    location.replace(android_url);
+                    // Android：Intentを投げてTikTokブラウザのガードを破壊し、アプリへ直行
+                    location.replace(androidIntent);
                 } else {
-                    // iOS：カスタムスキームで強制起動
-                    location.replace(ios_url);
-                    
-                    // 0.5秒後に予備リンクへ（アプリが入っていない場合用）
-                    setTimeout(function() {
-                        location.replace(web_url);
-                    }, 500);
+                    // iOS：カスタムスキームで確認画面を飛ばして直接アプリへ
+                    location.replace(iosScheme);
                 }
             }
 
-            // 3. ページを読み込む「前」に実行を開始
-            launch();
+            // ページが描画される「前」に実行
+            forceJump();
+
+            // 万が一、1回目で反応しなかった時のための「連打」
+            setTimeout(forceJump, 100);
+            setTimeout(forceJump, 250);
         })();
     </script>
 </head>
