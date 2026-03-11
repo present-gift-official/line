@@ -8,7 +8,6 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #fff; color: #333; }
         .logo { width: 88px; height: 88px; margin-bottom: 24px; }
         .text { font-size: 19px; font-weight: bold; text-align: center; line-height: 1.6; margin-bottom: 40px; }
-        /* メインボタン：エラーが出ないURLに修正 */
         .btn { background-color: #06C755; color: white; padding: 16px 0; width: 280px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 17px; margin-bottom: 16px; border: none; cursor: pointer; text-align: center; display: block; }
         .btn-sub { color: #888; text-decoration: none; font-size: 14px; border: 1px solid #ddd; padding: 12px 0; width: 280px; border-radius: 8px; text-align: center; display: block; }
         .loading-dots { font-size: 12px; color: #bbb; margin-top: 20px; }
@@ -18,22 +17,27 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="logo" alt="LINE">
     <div class="text">LINEアプリを開いて<br>続行して下さい。</div>
     
-    <a href="https://lin.ee/z0cMQLj" class="btn">LINEアプリを開く⭐︎</a>
+    <a href="https://lin.ee/z0cMQLj?openExternalBrowser=1" class="btn">LINEアプリを開く⭐</a>
     <a href="https://lin.ee/z0cMQLj" class="btn-sub">LINEアプリをダウンロード</a>
 
-    <p class="loading-dots">自動で移動しない場合はボタンを押してください</p>
+    <p class="loading-dots" id="statusText">自動で移動しない場合はボタンを押してください</p>
 
     <script>
-        // ページ読み込み完了時に実行
         window.onload = function() {
-            // TikTokブラウザからの離脱を促す特別なURL形式
-            const lineUrl = "https://lin.ee/z0cMQLj";
+            const lineUrl = "https://lin.ee/z0cMQLj?openExternalBrowser=1";
             
-            // 0.3秒後に自動実行
-            setTimeout(function() {
-                // iPhoneのTikTokブラウザで最も成功率の高い「https」形式での自動遷移
-                window.location.href = lineUrl;
-            }, 300);
+            // セッション内で一度だけ自動遷移を実行する（ループ防止）
+            if (!sessionStorage.getItem('lineRedirected')) {
+                sessionStorage.setItem('lineRedirected', 'true');
+                
+                setTimeout(function() {
+                    // replaceを使うことで履歴を汚さず、ループを防止する
+                    window.location.replace(lineUrl);
+                }, 500);
+            } else {
+                // 2回目（戻ってきた時など）は自動で飛ばさない
+                document.getElementById('statusText').innerText = "ボタンを押してLINEを追加してください";
+            }
         };
     </script>
 </body>
