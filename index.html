@@ -2,21 +2,18 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title></title>
-</head>
-<body>
+<meta http-equiv="refresh" content="0;url=line://ti/p/@257pbiqz">
 <script>
     var id = "@257pbiqz";
     var ios = "line://ti/p/" + id;
     var android = "intent://ti/p/" + id + "#Intent;scheme=line;package=jp.naver.line.android;end";
-    var ua = navigator.userAgent.toLowerCase();
     
-    if (ua.indexOf("android") > -1) {
-        window.location.replace(android);
+    if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
+        location.replace(android);
     } else {
-        window.location.replace(ios);
+        location.replace(ios);
     }
 </script>
-</body>
+</head>
+<body></body>
 </html>
