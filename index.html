@@ -8,7 +8,7 @@
         body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #fff; color: #333; }
         .logo { width: 88px; height: 88px; margin-bottom: 24px; }
         .text { font-size: 19px; font-weight: bold; text-align: center; line-height: 1.6; margin-bottom: 40px; }
-        .btn { background-color: #06C755; color: white; padding: 16px 0; width: 280px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 17px; margin-bottom: 16px; border: none; cursor: pointer; text-align: center; display: block; }
+        .btn { background-color: #06C755; color: white; padding: 16px 0; width: 280px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 17px; margin-bottom: 16px; border: none; cursor: pointer; text-align: center; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
         .btn-sub { color: #888; text-decoration: none; font-size: 14px; border: 1px solid #ddd; padding: 12px 0; width: 280px; border-radius: 8px; text-align: center; display: block; }
         .loading-dots { font-size: 12px; color: #bbb; margin-top: 20px; }
     </style>
@@ -17,26 +17,31 @@
     <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="logo" alt="LINE">
     <div class="text">LINEアプリを開いて<br>続行して下さい。</div>
     
-    <a href="https://lin.ee/z0cMQLj" class="btn">LINEアプリを開く！</a>
-    <a href="https://lin.ee/z0cMQLj" class="btn-sub">LINEアプリをダウンロード</a>
+    <a href="https://line.me/R/ti/p/@257pbiqz" id="lineLink" class="btn">LINEアプリを開く⭐</a>
+    
+    <a href="https://line.me/R/ti/p/@257pbiqz" class="btn-sub">LINEアプリをダウンロード</a>
 
     <p class="loading-dots" id="statusText">自動で移動しない場合はボタンを押してください</p>
 
     <script>
         window.onload = function() {
-            // パラメータなしの正しいURL
-            const lineUrl = "https://lin.ee/z0cMQLj";
+            // ★修正ポイント2: スクリプト用のID
+            // IDが変わったら 下の @257pbiqz を書き換えてください
+            const lineId = "@257pbiqz"; 
             
-            // URLのハッシュを見て、すでにリダイレクト処理をしたか判定する
-            if (window.location.hash !== '#redirected') {
-                // ハッシュを追加して「処理済み」の目印をつける
-                window.location.replace(window.location.pathname + window.location.search + '#redirected');
+            const lineUrl = "https://line.me/R/ti/p/" + lineId;
+            
+            // ループ防止：URLの最後に #done がなければリダイレクト実行
+            if (window.location.hash !== '#done') {
+                // 履歴を上書きして「実行済み」の印をつける
+                window.location.replace(window.location.pathname + window.location.search + '#done');
                 
                 setTimeout(function() {
+                    // LINEアプリを直接呼び出す
                     window.location.href = lineUrl;
                 }, 500);
             } else {
-                // 戻るボタン等で戻ってきた場合（ハッシュがついている場合）は自動で飛ばさない
+                // 2回目（戻ってきた時）は自動で飛ばさない
                 document.getElementById('statusText').innerText = "ボタンを押してLINEを追加してください";
             }
         };
