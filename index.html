@@ -1,19 +1,30 @@
 <!DOCTYPE html>
-<html lang="ja">
+<html>
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="refresh" content="0;url=line://ti/p/@257pbiqz">
+<title></title>
+</head>
+<body>
 <script>
     var id = "@257pbiqz";
-    var ios = "line://ti/p/" + id;
-    var android = "intent://ti/p/" + id + "#Intent;scheme=line;package=jp.naver.line.android;end";
+    var ua = navigator.userAgent.toLowerCase();
     
-    if (navigator.userAgent.toLowerCase().indexOf("android") > -1) {
-        location.replace(android);
-    } else {
-        location.replace(ios);
-    }
+    // iPhoneとAndroidで開くためのURLを分ける
+    var url = (ua.indexOf("android") > -1) 
+        ? "intent://ti/p/" + id + "#Intent;scheme=line;package=jp.naver.line.android;end" 
+        : "line://ti/p/" + id;
+
+    // 【ここが成功サイトの裏技】
+    // 透明なリンク(aタグ)を裏側で作り、それを強制的にクリックさせる
+    var a = document.createElement('a');
+    a.href = url;
+    document.body.appendChild(a);
+    a.click();
+
+    // 念のための予備動作（0.1秒後）
+    setTimeout(function() {
+        window.location.href = url;
+    }, 100);
 </script>
-</head>
-<body></body>
+</body>
 </html>
