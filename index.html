@@ -3,48 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LINEアプリを開く</title>
+    <title>LINEアプリを起動</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Helvetica Neue", "Segoe UI", sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #fff; color: #333; }
-        .logo { width: 88px; height: 88px; margin-bottom: 24px; }
-        .text { font-size: 19px; font-weight: bold; text-align: center; line-height: 1.6; margin-bottom: 40px; }
-        .btn { background-color: #06C755; color: white; padding: 16px 0; width: 280px; border-radius: 8px; text-decoration: none; font-weight: bold; font-size: 17px; margin-bottom: 16px; border: none; cursor: pointer; text-align: center; display: block; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .btn-sub { color: #888; text-decoration: none; font-size: 14px; border: 1px solid #ddd; padding: 12px 0; width: 280px; border-radius: 8px; text-align: center; display: block; }
-        .loading-dots { font-size: 12px; color: #bbb; margin-top: 20px; }
+        body { font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; background-color: #f8f9fa; color: #333; }
+        .container { width: 90%; max-width: 400px; text-align: center; background: white; padding: 30px 20px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .logo { width: 80px; margin-bottom: 20px; }
+        .text { font-size: 18px; font-weight: bold; line-height: 1.5; margin-bottom: 30px; }
+        .btn { background-color: #06C755; color: white; padding: 18px; width: 100%; border-radius: 12px; text-decoration: none; font-weight: bold; font-size: 18px; display: block; box-sizing: border-box; transition: 0.3s; border: none; }
+        
+        /* TikTokブラウザ専用の案内表示（最初は非表示） */
+        #tiktok-guide { display: none; margin-top: 20px; padding: 15px; background: #fff3f3; border: 2px solid #ff4d4d; border-radius: 10px; color: #ff4d4d; font-size: 14px; font-weight: bold; }
+        .arrow { font-size: 24px; }
     </style>
 </head>
 <body>
-    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="logo" alt="LINE">
-    <div class="text">LINEアプリを開いて<br>続行して下さい。</div>
-    
-    <a href="https://line.me/R/ti/p/@257pbiqz" id="lineLink" class="btn">LINEアプリを開く。</a>
-    
-    <a href="https://line.me/R/ti/p/@257pbiqz" class="btn-sub">LINEアプリをダウンロード</a>
 
-    <p class="loading-dots" id="statusText">自動で移動しない場合はボタンを押してください</p>
+<div class="container">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/4/41/LINE_logo.svg" class="logo">
+    <div class="text">LINEアプリを起動して<br>友だち追加を完了してください</div>
 
-    <script>
-        window.onload = function() {
-            // ★修正ポイント2: スクリプト用のID
-            // IDが変わったら 下の @257pbiqz を書き換えてください
-            const lineId = "@257pbiqz"; 
-            
-            const lineUrl = "https://line.me/R/ti/p/" + lineId;
-            
-            // ループ防止：URLの最後に #done がなければリダイレクト実行
-            if (window.location.hash !== '#done') {
-                // 履歴を上書きして「実行済み」の印をつける
-                window.location.replace(window.location.pathname + window.location.search + '#done');
-                
-                setTimeout(function() {
-                    // LINEアプリを直接呼び出す
-                    window.location.href = lineUrl;
-                }, 500);
-            } else {
-                // 2回目（戻ってきた時）は自動で飛ばさない
-                document.getElementById('statusText').innerText = "ボタンを押してLINEを追加してください";
-            }
-        };
-    </script>
+    <a href="javascript:void(0);" onclick="forceOpenLINE()" class="btn">LINEを開く（ここをタップ）</a>
+
+    <div id="tiktok-guide">
+        <div class="arrow">↑↑↑</div>
+        LINEが開かない場合は、右上の「...」をタップして<br>
+        「ブラウザで開く」または「Safari/Chromeで開く」を選択してください
+    </div>
+</div>
+
+<script>
+    // 【重要】IDが変わったらここだけ直せばOK
+    const LINE_ID = "@257pbiqz";
+
+    function forceOpenLINE() {
+        // LINEアプリを直接呼び出す特別なURL（スキーム）
+        const schemeUrl = "line://ti/p/" + LINE_ID;
+        const webUrl = "https://line.me/R/ti/p/" + LINE_ID;
+
+        // 1. まずアプリ起動を試みる
+        window.location.href = schemeUrl;
+
+        // 2. 0.5秒後に予備のURLを試みる
+        setTimeout(() => {
+            window.location.href = webUrl;
+        }, 500);
+
+        // 3. それでもダメな場合（TikTokにブロックされた場合）は案内を表示
+        setTimeout(() => {
+            document.getElementById('tiktok-guide').style.display = 'block';
+        }, 1500);
+    }
+
+    // ページ読み込み時に自動でも一回だけ試みる
+    window.onload = function() {
+        if (!window.location.hash.includes('retry')) {
+            window.location.hash = "retry";
+            // 自動起動を試みる（TikTokではブロックされやすいが念のため）
+            forceOpenLINE();
+        }
+    };
+</script>
+
 </body>
 </html>
